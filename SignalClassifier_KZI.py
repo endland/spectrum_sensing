@@ -25,6 +25,8 @@ import keras
 
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
+from mpl_toolkits.mplot3d import Axes3D
+
 
 from keras.optimizers  import Adam
 from keras.constraints import MaxNorm
@@ -261,9 +263,10 @@ def __loadsorttest_svm(datastore = 'training_data/cleaned_data', test = False):
     print X_data.shape
     print y_targets.shape
     # add by KZI to plot 3D
-    plot3d(X_data, y_targets)
+    #plot3d(X_data, y_targets)
     ##########################
     X_train, X_test, y_train, y_test = train_test_split(X_data, y_targets, test_size = 0.3, random_state = 0)
+    
     sc = StandardScaler()
     sc.fit(X_train)
     X_train_std = sc.transform(X_train) 
@@ -272,14 +275,24 @@ def __loadsorttest_svm(datastore = 'training_data/cleaned_data', test = False):
     X_combined_std = np.vstack((X_train_std, X_test_std))
     y_combined = np.hstack((y_train, y_test))
 
-    svm = SVC(kernel='linear', C=1.0, random_state=0)
-    svm.fit(X_train_std, y_train)
+    #svm = SVC(kernel='linear', C=1.0, random_state=0)
+    #svm = SVC(kernel='rbf', C=1.0, random_state=0)
+    svm = SVC(kernel='rbf', C=0.5, random_state=0)
+    svm.fit(X_train_std[:,[0,2,3,4,5,6]], y_train)
 
+    predict = svm.predict(X_test_std[:,[0,2,3,4,5,6]])
+    print 'Predict:',predict
+    print 'y_test:',y_test
+    print svm.score(X_test_std[:,[0,2,3,4,5,6]],y_test)
+
+
+    '''
     plot_decision_regions(X_combined_std, y_combined, classifier=svm, test_idx=range(105,150))
     plt.xlabel('petal length [standardized]')
     plt.ylabel('petal width [standardized]')
     plt.legend(loc='upper left')
     plt.show()
+    '''
     
     return svm, sc
 

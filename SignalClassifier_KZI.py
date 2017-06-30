@@ -275,9 +275,10 @@ def __loadsorttest_svm(datastore = 'training_data/cleaned_data', test = False):
     X_combined_std = np.vstack((X_train_std, X_test_std))
     y_combined = np.hstack((y_train, y_test))
 
-    #svm = SVC(kernel='linear', C=1.0, random_state=0)
+    svm = SVC(kernel='linear', C=1.0, random_state=0)
     #svm = SVC(kernel='rbf', C=1.0, random_state=0)
-    svm = SVC(kernel='rbf', C=0.5, random_state=0)
+    #svm = SVC(kernel='rbf', C=0.5, random_state=0)
+    #svm = SVC(kernel='rbf', C=1.0, random_state=0)
     svm.fit(X_train_std[:,[0,2,3,4,5,6]], y_train)
 
     predict = svm.predict(X_test_std[:,[0,2,3,4,5,6]])
@@ -362,10 +363,31 @@ def plot3d(X_data, y_targets):
 
 if __name__ == '__main__':
     #__loadsorttest_nn()
-    __loadsorttest_svm()
+    #model,scaler=__loadsorttest_svm()
+    #model,scaler=__loadsorttest_nn()
+    model,scaler = loadmodel('training_data/cleaned_data')
+
+    print type(model), type(scaler)
+
+    print 'Real testing:'
+    X_data, y_targets = loadtraindata('training_data/test_data')
+    print X_data.shape
+    print y_targets.shape
+        
+    X_std = scaler.transform(X_data) 
+    
+    #X_combined_std = np.vstack(X_std)
+    #y_combined = np.hstack(y_targets)
+
+    predict = model.predict(X_std[:,[0,2,3,4,5,6]])
+    print 'Predict:',predict
+    print 'y_targets:',y_targets
+    print model.score(X_std[:,[0,2,3,4,5,6]],y_targets)
+
+
     #X_train,Y_train,X_test,Y_test,train_idx,test_idx = load_TVWS_Data()
     
-"""
+'''
     #model, sc = __loadsorttest(test=True)
     kzi, sc = __loadsorttest()
     XX_data, yy_targets = loadtraindata('training_data/test_data')
@@ -383,4 +405,4 @@ if __name__ == '__main__':
     print kzi.predict(XX_data[:,[0,2,3,4,5,6]])
     print kzi.score(XX_data[:,[0,2,3,4,5,6]],yy_targets)
     print yy_targets
-"""
+'''
